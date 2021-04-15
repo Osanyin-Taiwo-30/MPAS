@@ -72,6 +72,28 @@
 ! * modified logic in subroutine physics_tables_init so that the Thompson microphysics tables are read in each
 !   MPI task.
 !   Laura D. Fowler (laura@ucar.edu) / 2016-12-30.
+! * added the options sf_mynn_wrf390 and bl_mynn_wrf390 for the MYNN parameterization from WRF version 3.9.0.
+!   Laura D. Fowler (laura@ucar.edu) / 2017-02-08.
+! * now defines the variable bl_mynn_cloudpdf in Registry.xml so that it can be assigned different values
+!   depending on the version of the PBL scheme.
+!   Laura D. Fowler (laura@ucar.edu) / 2017-03-09.
+! * added the convection_permitting_wrf390 suite which is as the original convection_permitting suite, except
+!   that it contains the surface layer and PBL schemes from WRF version 3.9.0.
+! * added the option cu_grell_freitas_wrf390 for the Grell-Freitas parameterization of convection from
+!   WRF version 3.9.0.
+!   Laura D. Fowler (laura@ucar.edu) / 2017-03-09.
+! * removed the options sf_mynn_wrf390 and bl_mynn_wrf390. The options sf_mynn and bl_mynn now point to the
+!   surface and PBL schemes from WRF version 3.9.0 instead of version 3.6.1.
+!   Laura D. Fowler (laura@ucar.edu) / 2018-01-24.
+! * removed the suite convection_permitting_wrf390. The suite convection_permitting now points to the surface
+!   layer scheme and PBL scheme from WRF version 3.9.0 instead of version 3.6.1
+!   Laura D. Fowler (laura@ucar.edu) / 2018-01-24.
+! * removed the options cam_lw and cam_sw.
+!   Laura D. Fowler (laura@ucar.edu) / 2018-02-01.
+! * added the option mp_thompson_aerosols.
+!   Laura D. Fowler (laura@ucar.edu) / 2018-01-31.
+! * added the option cu_kain_fritsch_sca to run the Kain-Fritsch scale-aware parameterization of convection.
+!   Laura D. Fowler (laura@ucar.edu) / 2018-02-06.
 
 
  contains
@@ -96,6 +118,8 @@
                                   config_radt_sw_scheme,    &
                                   config_sfclayer_scheme
 
+ integer,pointer:: config_mynn_cloudpdf
+
 !-----------------------------------------------------------------------------------------------------------------
 !call mpas_log_write('')
 !call mpas_log_write('--- enter subroutine physics_namelist_check:')
@@ -110,6 +134,8 @@
  call mpas_pool_get_config(configs,'config_radt_lw_scheme'   ,config_radt_lw_scheme   )
  call mpas_pool_get_config(configs,'config_radt_sw_scheme'   ,config_radt_sw_scheme   )
  call mpas_pool_get_config(configs,'config_sfclayer_scheme'  ,config_sfclayer_scheme  )
+
+ call mpas_pool_get_config(configs,'config_mynn_cloudpdf',config_mynn_cloudpdf)
 
  call mpas_log_write('')
  call mpas_log_write('----- Setting up physics suite '''//trim(config_physics_suite)//''' -----')
@@ -141,6 +167,8 @@
     if (trim(config_sfclayer_scheme)   == 'suite') config_sfclayer_scheme   = 'sf_mynn'
     if (trim(config_lsm_scheme)        == 'suite') config_lsm_scheme        = 'noah'
 
+    if (config_mynn_cloudpdf == -1) config_mynn_cloudpdf = 2
+
  else if (trim(config_physics_suite) == 'none') then
 
     if (trim(config_microp_scheme)     == 'suite') config_microp_scheme     = 'off'
@@ -162,9 +190,10 @@
  end if
 
 !cloud microphysics scheme:
- if(.not. (config_microp_scheme .eq. 'off'         .or. &
-           config_microp_scheme .eq. 'mp_kessler'  .or. &
-           config_microp_scheme .eq. 'mp_thompson' .or. &
+ if(.not. (config_microp_scheme .eq. 'off'                  .or. &
+           config_microp_scheme .eq. 'mp_kessler'           .or. &
+           config_microp_scheme .eq. 'mp_thompson'          .or. &
+           config_microp_scheme .eq. 'mp_thompson_aerosols' .or. &
            config_microp_scheme .eq. 'mp_wsm6')) then
 
     write(mpas_err_message,'(A,A10)') 'illegal value for config_microp_scheme:', &
@@ -174,10 +203,12 @@
  endif
 
 !convection scheme:
- if(.not. (config_convection_scheme .eq. 'off'              .or. &
-           config_convection_scheme .eq. 'cu_grell_freitas' .or. &
-           config_convection_scheme .eq. 'cu_kain_fritsch'  .or. &
-           config_convection_scheme .eq. 'cu_tiedtke'       .or. &
+ if(.not. (config_convection_scheme .eq. 'off'                     .or. &
+           config_convection_scheme .eq. 'cu_grell_freitas'        .or. &
+           config_convection_scheme .eq. 'cu_grell_freitas_wrf390' .or. &
+           config_convection_scheme .eq. 'cu_kain_fritsch'         .or. &
+           config_convection_scheme .eq. 'cu_kain_fritsch_sca'     .or. &
+           config_convection_scheme .eq. 'cu_tiedtke'              .or. &
            config_convection_scheme .eq. 'cu_ntiedtke')) then
 
     write(mpas_err_message,'(A,A10)') 'illegal value for config_convection_scheme: ', &
@@ -195,6 +226,10 @@
           trim(config_pbl_scheme)
     call physics_error_fatal(mpas_err_message)
 
+    !ensure that config_mynn_cloudpdf is correctly defined as a function of
+    !the MYNN version of the PBL scheme:
+    if(config_pbl_scheme .eq. 'bl_mynn') config_mynn_cloudpdf = 2
+
  endif
 
 !gravity wave drag over orography scheme:
@@ -209,7 +244,6 @@
 
 !lw radiation scheme:
  if(.not. (config_radt_lw_scheme .eq. 'off'    .or. &
-           config_radt_lw_scheme .eq. 'cam_lw' .or. &
            config_radt_lw_scheme .eq. 'rrtmg_lw')) then
  
     write(mpas_err_message,'(A,A10)') 'illegal value for longwave radiation scheme: ', &
@@ -220,7 +254,6 @@
 
 !sw radiation scheme:
  if(.not. (config_radt_sw_scheme .eq. 'off'    .or. &
-           config_radt_sw_scheme .eq. 'cam_sw' .or. &
            config_radt_sw_scheme .eq. 'rrtmg_sw')) then
  
     write(mpas_err_message,'(A,A10)') 'illegal value for shortwave radiation _scheme: ', &
@@ -255,19 +288,23 @@
  endif
 
 !surface-layer scheme:
- if(.not. (config_sfclayer_scheme .eq. 'off'     .or. &
-           config_sfclayer_scheme .eq. 'sf_mynn' .or. &
+ if(.not. (config_sfclayer_scheme .eq. 'off'            .or. &
+           config_sfclayer_scheme .eq. 'sf_mynn'        .or. &
            config_sfclayer_scheme .eq. 'sf_monin_obukhov')) then
  
     write(mpas_err_message,'(A,A10)') 'illegal value for surface layer scheme: ', &
           trim(config_sfclayer_scheme)
     call physics_error_fatal(mpas_err_message)
  else
+    !ensure that config_sfclayer_scheme is properly chosen and that config_mynn_cloudpdf is
+    !correctly defined as a function of the PBL scheme:
     if(config_pbl_scheme == 'bl_mynn') then
        config_sfclayer_scheme = 'sf_mynn'
+       config_mynn_cloudpdf   = 2
     elseif(config_pbl_scheme == 'bl_ysu') then
        config_sfclayer_scheme = 'sf_monin_obukhov'
     endif
+
  endif
 
 !land-surface scheme: note that config_sfclayer_scheme must be defined for the land-surface
@@ -388,7 +425,8 @@
  if(dminfo % my_proc_id == IO_NODE) then
 
     call mpas_pool_get_config(configs,'config_microp_scheme',config_microp_scheme)
-    if(config_microp_scheme /= "mp_thompson") return
+    if(config_microp_scheme /= "mp_thompson" .or. &
+       config_microp_scheme /= "mp_thompson_aerosols") return
 
     l_qr_acr_qg = .false.
     l_qr_acr_qs = .false.

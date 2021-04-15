@@ -1,0 +1,807 @@
+<!-- ========================================================================================================= -->
+<!-- physics diagnostics:                                                                                      -->
+<!-- ========================================================================================================= -->
+<var_struct name="diag_physics_vavg" time_levs="1">
+
+        <var name="qv_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged water vapor mixing ratio"/>
+
+        <var name="qc_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged cloud water mixing ratio"/>
+
+        <var name="qr_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged rain mixing ratio"/>
+
+        <var name="qi_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged cloud ice mixing ratio"/>
+
+        <var name="qs_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged snow mixing ratio"/>
+
+        <var name="qg_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged graupel mixing ratio"/>
+
+        <var name="nc_vavg" type="real" dimensions="nCells Time" units="nb m^{-2}"
+             description="vertically-averaged cloud water number concentration"/>
+
+        <var name="ni_vavg" type="real" dimensions="nCells Time" units="nb m^{-2}"
+             description="vertically-averaged cloud ice number concentration"/>
+
+        <var name="nr_vavg" type="real" dimensions="nCells Time" units="nb m^{-2}"
+             description="vertically-averaged rain number concentration"/>
+
+        <var name="nifa_vavg" type="real" dimensions="nCells Time" units="nb m^{-2}"
+             description="vertically-averaged "ice-friendly" aerosol number concentration"/>
+
+        <var name="nwfa_vavg" type="real" dimensions="nCells Time" units="nb m^{-2}"
+             description="vertically-averaged "water-friendly" aerosol number concentration"/>
+
+        <var name="qcf_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged cloud-weighted cloud water mixing ratio"/>
+
+        <var name="qrf_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged cloud-weighted rain mixing ratio"/>
+
+        <var name="qif_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged cloud-weighted cloud ice mixing ratio"/>
+
+        <var name="qsf_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged cloud-weighted snow mixing ratio"/>
+
+        <var name="qgf_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="vertically-averaged cloud-weighted graupel mixing ratio"/>
+
+        <var name="cld_max" type="real" dimensions="nCells Time" units="-"
+             description="maximum cloud fraction"/>
+
+</var_struct>
+
+<var_struct name="diag_physics_interp" time_levs="1">
+
+        <var name="t_interp" type="real" dimensions="nFGLevels nCells Time" units="K"
+             description="temperature interpolated to fixed pressure levels"/>
+
+        <var name="rh_interp" type="real" dimensions="nFGLevels nCells Time" units="-"
+             description="relative humidity interpolated to fixed pressure levels"/>
+
+        <var name="qv_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="water vapor mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="qc_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="cloud water mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="qr_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="rain mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="qi_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="cloud ice mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="qs_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="snow mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="qg_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="graupel mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="qcf_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="cld-weighted cloud water mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="qrf_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="cld-weighted rain mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="qif_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="cld-weighted cloud ice mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="qsf_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="cld-weighted snow mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="qgf_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1}"
+             description="cld-weighted graupel mixing ratio interpolated to fixed pressure levels"/>
+
+        <var name="cld_interp" type="real" dimensions="nFGLevels nCells Time" units="-"
+             description="cloud fraction interpolated to fixed pressure levels"/>
+
+        <var name="nc_interp" type="real" dimensions="nFGLevels nCells Time" units="nb kg^{-1}"
+              description="cloud water number concentration interpolated to fixed pressure levels"/>
+
+        <var name="ni_interp" type="real" dimensions="nFGLevels nCells Time" units="nb kg^{-1}"
+              description="cloud ice number concentration interpolated to fixed pressure levels"/>
+
+        <var name="nr_interp" type="real" dimensions="nFGLevels nCells Time" units="nb kg^{-1}"
+              description="rain number concentration interpolated to fixed pressure levels"/>
+
+        <var name="nifa_interp" type="real" dimensions="nFGLevels nCells Time" units="nb kg^{-1}"
+              description="ice-friendly aerosol number concentration interpolated to fixed pressure levels"/>
+
+        <var name="nwfa_interp" type="real" dimensions="nFGLevels nCells Time" units="nb kg^{-1}"
+              description="water-friendly aerosol number concentration interpolated to fixed pressure levels"/>
+
+</var_struct>
+
+<var_struct name="tend_physics_vavg" time_levs="1">
+
+        <var name="dtcup_vavg" type="real" dimensions="nCells Time" units="K s^{-1}"
+             description="vertically-integrated convective tendency of temperature"/>
+
+        <var name="dqvcup_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated convective tendency of water vapor mr"/>
+
+        <var name="dqccup_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated convective tendency of cloud water mr"/>
+
+        <var name="dqrcup_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated convective tendency of rain mr"/>
+
+        <var name="dqicup_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated convective tendency of cloud ice mr"/>
+
+        <var name="dqscup_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated convective tendency of snow mr"/>
+
+        <var name="dnccup_vavg" type="real" dimensions="nCells Time" units="# m^{-2} s^{-1}"
+             description="vertically-averaged convective tendency of cloud liquid water nb. concentration"/>
+
+        <var name="dnicup_vavg" type="real" dimensions="nCells Time" units="# m^{-2} s^{-1}"
+             description="vertically-averaged convective tendency of cloud ice nb. concentration"/>
+
+        <var name="dnifacup_vavg" type="real" dimensions="nCells Time" units="# m^{-2} s^{-1}"
+             description="vertically-averaged convective tendency of "ice friendly" nb. concentration"/>
+
+        <var name="dnwfacup_vavg" type="real" dimensions="nCells Time" units="# m^{-2} s^{-1}"
+             description="vertically-averaged convective tendency of "water friendly" nb. concentration"/>
+
+        <var name="dtmp_vavg" type="real" dimensions="nCells Time" units="K s^{-1}"
+             description="vertically-integrated microphysics tendency of temperature"/>
+
+        <var name="dqvmp_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of water vapor mr"/>
+
+        <var name="dqcmp_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of cloud water mr"/>
+
+        <var name="dqrmp_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of rain mr"/>
+
+        <var name="dqimp_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of cloud ice mr"/>
+
+        <var name="dqsmp_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of snow mr"/>
+
+        <var name="dqgmp_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of graupel mr"/>
+
+        <var name="dncmp_vavg" type="real" dimensions="nCells Time" units="# m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of cloud water nb"/>
+
+        <var name="dnimp_vavg" type="real" dimensions="nCells Time" units="# m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of cloud ice nb"/>
+
+        <var name="dnrmp_vavg" type="real" dimensions="nCells Time" units="# m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of rain nb"/>
+
+        <var name="dnifamp_vavg" type="real" dimensions="nCells Time" units="# m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of "ice-friendly" aerosol nb"/>
+
+        <var name="dnwfamp_vavg" type="real" dimensions="nCells Time" units="# m^{-2} s^{-1}"
+             description="vertically-integrated microphysics tendency of "water-friendly" aerosol nb"/>
+
+        <var name="dtbl_vavg" type="real" dimensions="nCells Time" units="K s^{-1}"
+             description="vertically-integrated PBL tendency of temperature"/>
+
+        <var name="dqvbl_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated PBL tendency of water vapor mr"/>
+
+        <var name="dqcbl_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated PBL tendency of cloud water mr"/>
+
+        <var name="dqibl_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated PBL tendency of cloud ice mr"/>
+
+        <var name="dncbl_vavg" type="real" dimensions="nCells Time" units="nb m^{-2} s^{-1}"
+             description="vertically-integrated PBL tendency of cloud water nb"/>
+
+        <var name="dnibl_vavg" type="real" dimensions="nCells Time" units="nb m^{-2} s^{-1}"
+             description="vertically-integrated PBL tendency of cloud ice nb"/>
+
+        <var name="dnrbl_vavg" type="real" dimensions="nCells Time" units="nb m^{-2} s^{-1}"
+             description="vertically-integrated PBL tendency of rain nb"/>
+
+        <var name="dnifabl_vavg" type="real" dimensions="nCells Time" units="nb m^{-2} s^{-1}"
+             description="vertically-integrated PBL tendency of "ice-friendly" aerosol nb"/>
+
+        <var name="dnwfabl_vavg" type="real" dimensions="nCells Time" units="nb m^{-2} s^{-1}"
+             description="vertically-integrated PBL tendency of "water-friendly" aerosol nb"/>
+
+        <var name="dtlw_vavg" type="real" dimensions="nCells Time" units="K s^{-1}"
+             description="vertically-integrated lw radiation tendency of temperature"/>
+
+        <var name="dtsw_vavg" type="real" dimensions="nCells Time" units="K s^{-1}"
+             description="vertically-integrated sw radiation tendency of temperature"/>
+
+</var_struct>
+
+<var_struct name="tend_physics_interp" time_levs="1">
+
+        <var name="dtcup_interp" type="real" dimensions="nFGLevels nCells Time" units="K s^{-1}"
+             description="convective tendency of temperature interpolated to fixed pressure levels"/>
+
+        <var name="dqvcup_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="convective tendency of water vapor mr interpolated to fixed pressure levels"/>
+
+        <var name="dqccup_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="convective tendency of cloud water mr interpolated to fixed pressure levels"/>
+
+        <var name="dqrcup_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="convective tendency of rain mr interpolated to fixed pressure levels"/>
+
+        <var name="dqicup_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="convective tendency of cloud ice mr interpolated to fixed pressure levels"/>
+
+        <var name="dqscup_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="convective tendency of snow mr interpolated to fixed pressure levels"/>
+
+        <var name="dnccup_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="convective tendency of cloud liquid water nb. concentration interpolated to fixed pressure levels"/>
+
+        <var name="dnicup_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="convective tendency of cloud ice nb. concentration interpolated to fixed pressure levels"/>
+
+        <var name="dnifacup_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="convective tendency of "ice friendly" nb. concentration  interpolated to fixed pressure levels"/>
+
+        <var name="dnwfacup_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="convective tendency of "water friendly" nb. concentration  interpolated to fixed pressure levels"/>
+
+        <var name="dtmp_interp" type="real" dimensions="nFGLevels nCells Time" units="K s^{-1}"
+             description="microphysics tendency of temperature interpolated to fixed pressure levels"/>
+
+        <var name="dqvmp_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="microphysics tendency of water vapor mr interpolated to fixed pressure levels"/>
+
+        <var name="dqcmp_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="microphysics tendency of cloud water mr interpolated to fixed pressure levels"/>
+
+        <var name="dqrmp_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="microphysics tendency of rain mr interpolated to fixed pressure levels"/>
+
+        <var name="dqimp_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="microphysics tendency of cloud ice mr interpolated to fixed pressure levels"/>
+
+        <var name="dqsmp_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="microphysics tendency of snow mr interpolated to fixed pressure levels"/>
+
+        <var name="dqgmp_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="microphysics tendency of graupel mr interpolated to fixed pressure levels"/>
+
+        <var name="dncmp_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="microphysics tendency of cloud liquid water nb. concentration interpolated to fixed pressure levels"/>
+
+        <var name="dnimp_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="microphysics tendency of cloud ice nb. concentration interpolated to fixed pressure levels"/>
+
+        <var name="dnrmp_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="microphysics tendency of rain nb. concentration interpolated to fixed pressure levels"/>
+
+        <var name="dnifamp_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="microphysics tendency of "ice friendly" nb. concentration  interpolated to fixed pressure levels"/>
+
+        <var name="dnwfamp_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="microphysics tendency of "water friendly" nb. concentration  interpolated to fixed pressure levels"/>
+
+        <var name="dtbl_interp" type="real" dimensions="nFGLevels nCells Time" units="K s^{-1}"
+             description="PBL tendency of temperature interpolated to fixed pressure levels"/>
+
+        <var name="dqvbl_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="PBL tendency of water vapor mr interpolated to fixed pressure levels"/>
+
+        <var name="dqcbl_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="PBL tendency of cloud water mr interpolated to fixed pressure levels"/>
+
+        <var name="dqibl_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="PBL tendency of cloud ice mr interpolated to fixed pressure levels"/>
+
+        <var name="dncbl_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="PBL tendency of cloud liquid water nb. concentration interpolated to fixed pressure levels"/>
+
+        <var name="dnibl_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="PBL tendency of cloud ice nb. concentration interpolated to fixed pressure levels"/>
+
+        <var name="dnrbl_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="PBL tendency of rain nb. concentration interpolated to fixed pressure levels"/>
+
+        <var name="dnifabl_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="PBL tendency of "ice friendly" nb. concentration  interpolated to fixed pressure levels"/>
+
+        <var name="dnwfabl_interp" type="real" dimensions="nFGLevels nCells Time" units="# kg^{-1} s^{-1}"
+             description="PBL tendency of "water friendly" nb. concentration  interpolated to fixed pressure levels"/>
+
+        <var name="dtlw_interp" type="real" dimensions="nFGLevels nCells Time" units="K s^{-1}"
+             description="lw radiation tendency of potential temperature interpolated to fixed pressure levels"/>
+
+        <var name="dtsw_interp" type="real" dimensions="nFGLevels nCells Time" units="K s^{-1}"
+             description="sw radiation tendency of temperature interpolated to fixed pressure levels"/>
+
+</var_struct>
+
+
+<var_struct name="diag_physics_cu" time_levs="1">
+
+        <var name="k22_deepc" type="integer" dimensions="nCells Time" units="unitless"
+             description="k22 level for deep convection in the Grell-Freitas convection scheme"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="k22_midlc" type="integer" dimensions="nCells Time" units="unitless"
+             description="k22 level for mid-level convection in the Grell-Freitas convection scheme"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="k22_shalc" type="integer" dimensions="nCells Time" units="unitless"
+             description="k22 level for shallow convection in the Grell-Freitas convection scheme"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="kbcon_deepc" type="integer" dimensions="nCells Time" units="unitless"
+             description="cloud-base level for deep convection in the Grell-Freitas convection scheme"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="kbcon_midlc" type="integer" dimensions="nCells Time" units="unitless"
+             description="cloud-base level for mid-level convection in the Grell-Freitas convection scheme"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="kbcon_shalc" type="integer" dimensions="nCells Time" units="unitless"
+             description="cloud-base level for shallow convection in the Grell-Freitas convection scheme"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="ktop_deepc" type="integer" dimensions="nCells Time" units="unitless"
+             description="cloud-top level for deep convection in the Grell-Freitas convection scheme"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="ktop_midlc" type="integer" dimensions="nCells Time" units="unitless"
+             description="cloud-top level for mid-level convection in the Grell-Freitas convection scheme"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="ktop_shalc" type="integer" dimensions="nCells Time" units="unitless"
+             description="cloud-top level for shallow convection in the Grell-Freitas convection scheme"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldp_k22s" type="real" dimensions="nCells Time" missing_value="-999." units="Pa"
+             description="pressure at k22_shalc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldt_k22s" type="real" dimensions="nCells Time" missing_value="-999." units="K"
+             description="temperature at k22_shalc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldh_k22s" type="real" dimensions="nCells Time" missing_value="-999." units="m"
+             description="height at k22_shalc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldp_kbcons" type="real" dimensions="nCells Time" missing_value="-999." units="Pa"
+             description="pressure at kbcon_shalc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldt_kbcons" type="real" dimensions="nCells Time" missing_value="-999." units="K"
+             description="temperature at kbcon_shalc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldh_kbcons" type="real" dimensions="nCells Time" missing_value="-999." units="m"
+             description="height at kbcon_shalc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldp_ktops" type="real" dimensions="nCells Time" missing_value="-999." units="Pa"
+             description="pressure at ktop_shalc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldt_ktops" type="real" dimensions="nCells Time" missing_value="-999." units="K"
+             description="temperature at ktop_shalc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldh_ktops" type="real" dimensions="nCells Time" missing_value="-999." units="m"
+             description="height at ktop_shalc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldp_k22m" type="real" dimensions="nCells Time" missing_value="-999." units="Pa"
+             description="pressure at k22_midlc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldt_k22m" type="real" dimensions="nCells Time" missing_value="-999." units="K"
+             description="temperature at k22_midlc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldh_k22m" type="real" dimensions="nCells Time" missing_value="-999." units="m"
+             description="height at k22_midlc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldp_kbconm" type="real" dimensions="nCells Time" missing_value="-999." units="Pa"
+             description="pressure at kbcon_midlc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldt_kbconm" type="real" dimensions="nCells Time" missing_value="-999." units="K"
+             description="temperature at kbcon_midlc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldh_kbconm" type="real" dimensions="nCells Time" missing_value="-999." units="m"
+             description="height at kbcon_midlc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldp_ktopm" type="real" dimensions="nCells Time" missing_value="-999." units="Pa"
+             description="pressure at ktop_midlc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldt_ktopm" type="real" dimensions="nCells Time" missing_value="-999." units="K"
+             description="temperature at ktop_midlc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldh_ktopm" type="real" dimensions="nCells Time" missing_value="-999." units="m"
+             description="height at ktop_midlc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldp_k22d" type="real" dimensions="nCells Time" missing_value="-999." units="Pa"
+             description="pressure at k22_deepc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldt_k22d" type="real" dimensions="nCells Time" missing_value="-999." units="K"
+             description="temperature at k22_deepc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldh_k22d" type="real" dimensions="nCells Time" missing_value="-999." units="m"
+             description="height at k22_deepc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldp_kbcond" type="real" dimensions="nCells Time" missing_value="-999." units="Pa"
+             description="pressure at kbcon_deepc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldt_kbcond" type="real" dimensions="nCells Time" missing_value="-999." units="K"
+             description="temperature at kbcon_deepc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldh_kbcond" type="real" dimensions="nCells Time" missing_value="-999." units="m"
+             description="height at kbcon_deepc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldp_ktopd" type="real" dimensions="nCells Time" missing_value="-999." units="Pa"
+             description="pressure at ktop_deepc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldt_ktopd" type="real" dimensions="nCells Time" missing_value="-999." units="K"
+             description="temperature at ktop_deepc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="cldh_ktopd" type="real" dimensions="nCells Time" missing_value="-999." units="m"
+             description="height at ktop_deepc level"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qc_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud liquid water path for shallow convection (kbcon_shalc-ktop_shalc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qc_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud liquid water path for mid-level convection (kbcon_midlc-ktop_midlc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qc_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud liquid water path for deep convection (kbcon_deepc to ktop_deepc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qr_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="rain water path for shallow convection (kbcon_shalc-ktop_shalc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qr_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="rain water path for mid-level convection (kbcon_midlc-ktop_midlc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qr_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="rain water path for deep convection (kbcon_deepc to ktop_deepc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qi_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud ice path for shallow convection (kbcon_shalc-ktop_shalc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qi_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud ice path for mid-level convection (kbcon_midlc-ktop_midlc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qi_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud ice path for deep convection (kbcon_deepc to ktop_deepc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qs_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="snow path for shallow convection (kbcon_shalc-ktop_shalc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qs_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="snow path for mid-level convection (kbcon_midlc-ktop_midlc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qs_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="snow path for deep convection (kbcon_deepc to ktop_deepc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qg_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="graupel path for shallow convection (kbcon_shalc-ktop_shalc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qg_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="graupel path for mid-level convection (kbcon_midlc-ktop_midlc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qg_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="graupel path for deep convection (kbcon_deepc to ktop_deepc)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qc_kbcon_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud liquid water path between surface and kbcon_shalc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qc_kbcon_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud liquid water path between surface and kbcon_midlc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qc_kbcon_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud liquid water path between surface and kbcon_deepc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qr_kbcon_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="rain water path between surface and kbcon_shalc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qr_kbcon_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="rain water path between surface and kbcon_midlc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qr_kbcon_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="rain water path between surface and kbcon_deepc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qi_kbcon_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud ice path between surface and kbcon_shalc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qi_kbcon_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud ice path between surface and kbcon_midlc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qi_kbcon_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud ice path between surface and kbcon_deepc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qs_kbcon_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="snow path between surface and kbcon_shalc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qs_kbcon_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="snow path between surface and kbcon_midlc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qs_kbcon_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="snow path between surface and kbcon_deepc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qg_kbcon_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="graupel path between surface and kbcon_shalc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qg_kbcon_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="graupel path between surface and kbcon_midlc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qg_kbcon_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="graupel path between surface and kbcon_deepc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qc_ktop_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud liquid water path between surface and ktop_shalc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qc_ktop_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud liquid water path between surface and ktop_midlc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qc_ktop_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud liquid water path between surface and ktop_deepc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qc_above_conv" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description-"cloud liquid water path above convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qr_ktop_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="rain water path between surface and ktop_shalc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qr_ktop_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="rain water path between surface and ktop_midlc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qr_ktop_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="rain water path between surface and ktop_deepc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qr_above_conv" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description-"rain water path above convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qi_ktop_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud ice path between surface and ktop_shalc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qi_ktop_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud ice path between surface and ktop_midlc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qi_ktop_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="cloud ice path between surface and ktop_deepc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qi_above_conv" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description-"cloud ice path above convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qs_ktop_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="snow path between surface and ktop_shalc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qs_ktop_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="snow path between surface and ktop_midlc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qs_ktop_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="snow path between surface and ktop_deepc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qs_above_conv" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description-"snow path above convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qg_ktop_shalc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="graupel path between surface and ktop_shalc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qg_ktop_midlc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="graupel path between surface and ktop_midlc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qg_ktop_deepc" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="graupel path between surface and ktop_deepc"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qg_above_conv" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description-"graupel path above convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qccu_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="in-cloud convection cloud liquid water path"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qicu_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="in-cloud convection cloud ice path"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qccu_shalc_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="in-cloud convection cloud liquid water path for shallow convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="qicu_shalc_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="in-cloud convection cloud ice path for shallow convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="zu_shalc_interp" type="real" dimensions="nFGLevels nCells Time" units="kg m^{-2} s^{-1}"
+             description="upward mass flux for shallow convection interpolated to fixed pressure levels"
+             packages="cu_grell_freitas_in"/>
+
+        <var name="zd_shalc_interp" type="real" dimensions="nFGLevels nCells Time" units="kg m^{-2} s^{-1}"
+             description="downward mass flux for shallow convection interpolated to fixed pressure levels"
+             packages="cu_grell_freitas_in"/>
+
+        <var name="zu_midlc_interp" type="real" dimensions="nFGLevels nCells Time" units="kg m^{-2} s^{-1}"
+             description="upward mass flux for mid-level convection interpolated to fixed pressure levels"
+             packages="cu_grell_freitas_in"/>
+
+        <var name="zd_midlc_interp" type="real" dimensions="nFGLevels nCells Time" units="kg m^{-2} s^{-1}"
+             description="downward mass flux for mid-level convection interpolated to fixed pressure levels"
+             packages="cu_grell_freitas_in"/>
+
+        <var name="zu_deepc_interp" type="real" dimensions="nFGLevels nCells Time" units="kg m^{-2} s^{-1}"
+             description="upward mass flux for deep convection interpolated to fixed pressure levels"
+             packages="cu_grell_freitas_in"/>
+
+        <var name="zd_deepc_interp" type="real" dimensions="nFGLevels nCells Time" units="kg m^{-2} s^{-1}"
+             description="downward mass flux for shallow convection interpolated to fixed pressure levels"
+             packages="cu_grell_freitas_in"/>
+</var_struct>
+
+<var_struct name="tend_physics_cu" time_levs="1">
+
+        <var name="dtcups_vavg" type="real" dimensions="nCells Time" units="K s^{-1}"
+             description="vertically-integrated convective tendency of temperature for shallow convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dqvcups_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated convective tendency of water vapor mr for shallow convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dqccups_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated convective tendency of cloud water mr for shallow convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dqrcups_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated convective tendency of rain mr for shallow convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dqicups_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated convective tendency of cloud ice mr for shallow convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dqscups_vavg" type="real" dimensions="nCells Time" units="kg m^{-2} s^{-1}"
+             description="vertically-integrated convective tendency of snow mr for shallow convection"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dtcups_interp" type="real" dimensions="nFGLevels nCells Time" units="K s^{-1}"
+             description="convective tendency of temperature interpolated to fixed pressure levels (shallow convection)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dqvcups_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="convective tendency of water vapor mr interpolated to fixed pressure levels (shallow convection)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dqccups_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="convective tendency of cloud water mr interpolated to fixed pressure levels (shallow convection)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dqrcups_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="convective tendency of rain mr interpolated to fixed pressure levels (shallow convection)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dqicups_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="convective tendency of cloud ice mr interpolated to fixed pressure levels (shallow convection)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+        <var name="dqscups_interp" type="real" dimensions="nFGLevels nCells Time" units="kg kg^{-1} s^{-1}"
+             description="convective tendency of snow mr interpolated to fixed pressure levels (shallow convection)"
+             packages="cu_grell_freitas_in;cu_kain_fritsch_in"/>
+
+</var_struct>
+
+<var_struct name="diag_physics_bl" time_levs="1">
+
+        <var name="pblp_top" type="real" dimensions="nCells Time" unit="hPa"
+             description="pressure at PBL top" missing_value="-999."
+             packages="bl_mynn_in"/>
+
+        <var name="pblt_top" type="real" dimensions="nCells Time" unit="K"
+             description="temperature at PBL top" missing_value="-999."
+             packages="bl_mynn_in"/>
+
+        <var name="pblh_top" type="real" dimensions="nCells Time" unit="m"
+             description="height at PBL top" missing_value="-999."
+             packages="bl_mynn_in"/>
+
+        <var name="qv_bl_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="PBL water vapor path"
+             packages="bl_mynn_in"/>
+
+        <var name="qc_bl_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="PBL cloud liquid water path"
+             packages="bl_mynn_in"/>
+
+        <var name="qr_bl_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="PBL rain water path"
+             packages="bl_mynn_in"/>
+
+        <var name="qi_bl_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="PBL cloud ice path"
+             packages="bl_mynn_in"/>
+
+        <var name="qs_bl_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="PBL snow path"
+             packages="bl_mynn_in"/>
+
+        <var name="qg_bl_vavg" type="real" dimensions="nCells Time" units="kg m^{-2}"
+             description="PBL graupel path"
+             packages="bl_mynn_in"/>
+
+</var_struct>
+
+
+<!-- ========================================================================================================= -->

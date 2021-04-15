@@ -80,7 +80,8 @@
 
  if(config_microp_scheme == 'mp_kessler') then
     mp_kessler_in = .true.
- elseif(config_microp_scheme == 'mp_thompson') then
+ elseif(config_microp_scheme == 'mp_thompson' .or. &
+        config_microp_scheme == 'mp_thompson_aerosols') then
     mp_thompson_in = .true.
  elseif(config_microp_scheme == 'mp_wsm6') then
     mp_wsm6_in = .true.
@@ -117,9 +118,11 @@
  cu_kain_fritsch_in  = .false.
  cu_tiedtke_in       = .false.
 
- if(config_convection_scheme=='cu_grell_freitas') then
+ if(config_convection_scheme=='cu_grell_freitas' .or. &
+    config_convection_scheme=='cu_grell_freitas_wrf390') then
     cu_grell_freitas_in = .true.
- elseif(config_convection_scheme == 'cu_kain_fritsch') then
+ elseif(config_convection_scheme == 'cu_kain_fritsch' .or. &
+        config_convection_scheme == 'cu_kain_fritsch_sca') then
     cu_kain_fritsch_in = .true.
  elseif(config_convection_scheme == 'cu_tiedtke' .or. &
         config_convection_scheme == 'cu_ntiedtke') then
@@ -152,7 +155,7 @@
  bl_mynn_in = .false.
  bl_ysu_in  = .false.
 
- if(config_pbl_scheme=='bl_mynn') then
+ if(config_pbl_scheme == 'bl_mynn') then
     bl_mynn_in = .true.
  elseif(config_pbl_scheme == 'bl_ysu') then
     bl_ysu_in = .true.

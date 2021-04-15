@@ -1,3 +1,7 @@
+!=================================================================================================================
+!reference: WRF-v4.1.4
+!Laura D. Fowler (laura@ucar.edu) / 2020-01-10.
+
 module module_sf_noah_seaice_drv
 #if defined(mpas)
 use mpas_atmphys_utilities, only: physics_message,physics_error_fatal
@@ -25,7 +29,7 @@ contains
        &                  IDS, IDE, JDS, JDE, KDS, KDE,                                 &
        &                  IMS, IME, JMS, JME, KMS, KME,                                 &
        &                  ITS, ITE, JTS, JTE, KTS, KTE  )
-#if defined(wrfmodel)
+#if !defined(mpas)
 #if (NMM_CORE != 1)
     USE module_state_description, ONLY : NOAHUCMSCHEME
     USE module_state_description, ONLY : BEPSCHEME
@@ -479,7 +483,7 @@ contains
                &         - SHEAT + SSOIL - ETA &
                &         - ( EMISSI * STBOLT * (T1**4) ) &
                &         - FLX1 - FLX2 - FLX3
-#if defined(wrfmodel)
+#if !defined(mpas)
 #if (NMM_CORE != 1)
           IF ( ( SF_URBAN_PHYSICS == NOAHUCMSCHEME ) .OR. &
                (SF_URBAN_PHYSICS == BEPSCHEME )      .OR. &

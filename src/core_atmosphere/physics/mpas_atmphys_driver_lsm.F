@@ -9,7 +9,7 @@
  module mpas_atmphys_driver_lsm
  use mpas_kind_types
  use mpas_pool_routines
- use mpas_timer, only : mpas_timer_start, mpas_timer_stop
+ use mpas_timer,only: mpas_timer_start,mpas_timer_stop
 
  use mpas_atmphys_constants
  use mpas_atmphys_landuse, only: isurban
@@ -93,6 +93,10 @@
 ! * added call to seaice_noah to include the parameterization of seaice for the updated Noah land surface
 !   scheme.
 !   Laura D. Fowler (laura@ucar.edu) / 2017-02-19.
+! * modified the call to the subroutine lsm in conjunction with updated the NOAH land surface scheme to
+!   WRF-v4.1.4.
+!   Laura D. Fowler (laura@ucar.edu) / 2020-01-10.
+
 
 !
 ! DOCUMENTATION:
@@ -808,7 +812,7 @@
  lsm_select: select case (trim(lsm_scheme))
 
     case("noah")
-       call mpas_timer_start('Noah')
+       call mpas_timer_start('sf_noah')
        call lsm( &
                 dz8w        = dz_p        , p8w3d       = pres2_hyd_p  , t3d       = t_p          , &
                 qv3d        = qv_p        , xland       = xland_p      , xice      = xice_p       , &
@@ -844,8 +848,17 @@
                 num_roof_layers  = num_soils ,                                                      &
                 num_wall_layers  = num_soils ,                                                      &
                 num_road_layers  = num_soils ,                                                      &
-                num_urban_layers = num_soils ,                                                      &
+                num_urban_ndm    = num_soils ,                                                      &
                 num_urban_hi     = num_soils ,                                                      &
+                urban_map_zrd    = num_soils ,                                                      &
+                urban_map_zwd    = num_soils ,                                                      &
+                urban_map_gd     = num_soils ,                                                      &
+                urban_map_zd     = num_soils ,                                                      &
+                urban_map_zdf    = num_soils ,                                                      &
+                urban_map_bd     = num_soils ,                                                      &
+                urban_map_wd     = num_soils ,                                                      &
+                urban_map_gbd    = num_soils ,                                                      &
+                urban_map_fbd    = num_soils ,                                                      &
                 sf_urban_physics = sf_urban_physics ,                                               &
                 ids = ids , ide = ide , jds = jds , jde = jde , kds = kds , kde = kde ,             &
                 ims = ims , ime = ime , jms = jms , jme = jme , kms = kms , kme = kme ,             &
@@ -893,8 +906,7 @@
                 ims = ims , ime = ime , jms = jms , jme = jme , kms = kms , kme = kme ,           &
                 its = its , ite = ite , jts = jts , jte = jte , kts = kts , kte = kte             &
                     )
-       call mpas_timer_stop('Noah')
-                
+       call mpas_timer_stop('sf_noah')
 
     case default
 

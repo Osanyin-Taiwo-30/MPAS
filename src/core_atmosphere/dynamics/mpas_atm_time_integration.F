@@ -226,6 +226,9 @@ module atm_time_integration
       real (kind=RKIND), dimension(:,:,:), pointer :: scalars, scalars_1, scalars_2
 
       real (kind=RKIND), dimension(:,:), pointer :: rqvdynten
+      real (kind=RKIND), dimension(:,:), pointer :: rthdynten, theta_m, rho_zz
+      real (kind=RKIND), dimension(:,:,:), pointer :: scalars_tend
+      real (kind=RKIND) :: theta_local, fac_m
 
       real (kind=RKIND)  :: time_dyn_step
       logical, parameter :: debug = .false.
@@ -1627,19 +1630,45 @@ module atm_time_integration
          call mpas_pool_get_dimension(block % dimensions, 'cellSolveThreadEnd', cellSolveThreadEnd)
 
          if(config_convection_scheme == 'cu_grell_freitas'          .or. &
+            config_convection_scheme == 'cu_grell_freitas_wrf390'   .or. &
             config_convection_scheme == 'cu_tiedtke'                .or. &
             config_convection_scheme == 'cu_ntiedtke') then
 
             call mpas_pool_get_array(tend_physics, 'rqvdynten', rqvdynten)
+            call mpas_pool_get_array(tend_physics, 'rthdynten', rthdynten)
+            call mpas_pool_get_array(state, 'theta_m', theta_m,2)
+            call mpas_pool_get_array(state, 'rho_zz', rho_zz,1)
+            call mpas_pool_get_array(tend, 'scalars_tend', scalars_tend)
+            call mpas_pool_get_dimension(mesh, 'nCellsSolve', nCellsSolve)
+            call mpas_pool_get_dimension(mesh, 'nVertLevels', nVertLevels)
 
-            !NOTE: The calculation of the tendency due to horizontal and vertical advection for the water vapor mixing ratio
-            !requires that the subroutine atm_advance_scalars_mono was called on the third Runge Kutta step, so that a halo
-            !update for the scalars at time_levs(1) is applied. A halo update for the scalars at time_levs(2) is done above. 
-            if (config_monotonic) then
-               rqvdynten(:,:) = ( scalars_2(index_qv,:,:) - scalars_1(index_qv,:,:) ) / config_dt
-            else
-               rqvdynten(:,:) = 0._RKIND
-            end if
+            ! The calculation of the tendency due to horizontal and vertical advection for the water vapor mixing ratio,
+            ! and the transformation of the theta_m tendency to a theta_tendency.
+            ! In the case of monotonic advection, the physics tendency for qv is already accounted for because
+            ! time level 1 includes it.
+
+            do iCell = 1, nCellsSolve
+
+               if (config_monotonic) then ! no physics tend in update
+                  do k = 1, nVertLevels
+                     rqvdynten(k,iCell) = (   scalars_2(index_qv,k,iCell) - scalars_1(index_qv,k,iCell) ) / config_dt
+                  end do
+               else  ! physics tend in update, need to remove it
+                  do k = 1, nVertLevels
+                     rqvdynten(k,iCell) = (   scalars_2(index_qv,k,iCell) - scalars_1(index_qv,k,iCell) ) / config_dt &
+                                                     - scalars_tend(index_qv,k,iCell)/rho_zz(k,iCell)
+                  end do
+               end if
+
+               do k = 1, nVertLevels
+                  ! fix theta advection tendency - convert from theta_m to theta
+                  fac_m = 1./(1. + 1.61*scalars_2(index_qv,k,iCell))
+                  theta_local = theta_m(k,iCell)*fac_m
+                  rthdynten(k,iCell) = fac_m*(rthdynten(k,iCell)-theta_local*1.61*rqvdynten(k,iCell))
+               end do
+
+            end do
+
          end if
 
          !simply set to zero negative mixing ratios of different water species (for now):
@@ -1651,8 +1680,8 @@ module atm_time_integration
             call mpas_timer_start('microphysics')
 !$OMP PARALLEL DO
             do thread=1,nThreads
-               call driver_microphysics ( block % configs, mesh, state, 2, diag, diag_physics, tend, itimestep, &
-                                          cellSolveThreadStart(thread), cellSolveThreadEnd(thread))
+               call driver_microphysics ( block % configs, mesh, state, 2, diag, diag_physics, tend_physics, tend, &
+                                          itimestep, cellSolveThreadStart(thread), cellSolveThreadEnd(thread))
             end do
 !$OMP END PARALLEL DO
             call mpas_timer_stop('microphysics')
@@ -5347,8 +5376,9 @@ module atm_time_integration
 !DIR$ IVDEP
          do k=1,nVertLevels
             tend_theta(k,iCell) = tend_theta(k,iCell)*invAreaCell(iCell) -rdzw(k)*(wdtz(k+1)-wdtz(k))
-            tend_rtheta_adv(k,iCell) = tend_theta(k,iCell)   !  this is for the Tiedke scheme
-            rthdynten(k,iCell) = tend_theta(k,iCell)/rho_zz(k,iCell)  !  this is for the Grell-Freitas scheme
+            ! tend_rtheta_adv(k,iCell) = tend_theta(k,iCell)   !  this was for the Tiedke scheme, no longer used
+            ! rthdynten for the Grell-Freitas and (n)Tiedtke schemes
+            rthdynten(k,iCell) = (tend_theta(k,iCell)-tend_rho(k,iCell)*theta_m(k,iCell))/rho_zz(k,iCell)
             tend_theta(k,iCell) = tend_theta(k,iCell) + rho_zz(k,iCell)*rt_diabatic_tend(k,iCell)
          end do
       end do
@@ -7008,7 +7038,7 @@ module atm_time_integration
                end do
                call mpas_dmpar_min_real(domain % dminfo, scalar_min, global_scalar_min)
                call mpas_dmpar_max_real(domain % dminfo, scalar_max, global_scalar_max)
-               call mpas_log_write(' global min, max scalar $i $r $r', intArgs=(/iScalar/), realArgs=(/global_scalar_min, global_scalar_max/))
+               call mpas_log_write('global min, max scalar $i $r $r', intArgs=(/iScalar/), realArgs=(/global_scalar_min, global_scalar_max/))
             end do
 
             block => block % next

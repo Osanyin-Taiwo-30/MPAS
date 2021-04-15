@@ -17,6 +17,7 @@
  use mpas_atmphys_driver_radiation_lw, only: init_radiation_lw
  use mpas_atmphys_driver_radiation_sw, only: init_radiation_sw
  use mpas_atmphys_driver_sfclayer
+ use mpas_atmphys_vars, only: f_qv,f_qc,f_qr,f_qi,f_qs,f_qg,f_qoz,f_nc,f_ni,f_nifa,f_nwfa
 
  use mpas_atmphys_landuse
  use mpas_atmphys_o3climatology
@@ -64,6 +65,13 @@
 ! * removed the calculation of the variable dcEdge_m which is no longer needed in the different physics
 !   parameterizations.
 !   Laura D. Fowler (laura@ucar.edu) / 2016-10-18.
+! * removed all sourcecode related to the initialization of the CAM longwave and shortwave radiation codes.
+!   Laura D. Fowler (laura@ucar.edu) / 2018-02-01.
+! * restored the initialization of aerosols for the Thompson cloud microphysics scheme.
+!   Laura D. Fowler (laura@ucar.edu) / 2018-02-05.
+! * added the subroutine init_physics_flags to initialize all the f_* flags for cloud water species. add the flag
+!   to initialize the ozone mixing ratio.
+!   Laura D. Fowler (laura@ucar.edu) / 2021-03-09.
 
 
  contains
@@ -91,8 +99,9 @@
  type(mpas_pool_type),intent(inout):: sfc_input
 
 !local pointers:
- logical,pointer:: config_do_restart,       &
-                   config_o3climatology
+ logical,pointer:: config_do_restart,    &
+                   config_o3climatology, &
+                   config_oml1d
 
  character(len=StrKIND),pointer::            &
                    config_lsm_scheme,        &
@@ -102,40 +111,37 @@
                    config_radt_lw_scheme,    &
                    config_radt_sw_scheme
 
- integer,pointer:: nCellsSolve,nLags
- integer,dimension(:),pointer  :: i_rainc,i_rainnc
- integer,dimension(:),pointer  :: i_acswdnb,i_acswdnbc,i_acswdnt,i_acswdntc, &
-                                  i_acswupb,i_acswupbc,i_acswupt,i_acswuptc, &
-                                  i_aclwdnb,i_aclwdnbc,i_aclwdnt,i_aclwdntc, &
-                                  i_aclwupb,i_aclwupbc,i_aclwupt,i_aclwuptc
+ integer,pointer:: nCellsSolve,nClosures,nLags
+ integer,dimension(:),pointer:: i_rainc,i_rainnc
+ integer,dimension(:),pointer:: i_acswdnb,i_acswdnbc,i_acswdnt,i_acswdntc, &
+                                i_acswupb,i_acswupbc,i_acswupt,i_acswuptc, &
+                                i_aclwdnb,i_aclwdnbc,i_aclwdnt,i_aclwdntc, &
+                                i_aclwupb,i_aclwupbc,i_aclwupt,i_aclwuptc
+ integer,dimension(:,:),pointer:: i_raincd_closures
 
- real(kind=RKIND),dimension(:),pointer  :: acswdnb,acswdnbc,acswdnt,acswdntc,  &
-                                           acswupb,acswupbc,acswupt,acswuptc,  &
-                                           aclwdnb,aclwdnbc,aclwdnt,aclwdntc,  &
-                                           aclwupb,aclwupbc,aclwupt,aclwuptc
- real(kind=RKIND),dimension(:),pointer  :: nsteps_accum,ndays_accum,tday_accum, &
-                                           tyear_accum,tyear_mean
- real(kind=RKIND),dimension(:),pointer  :: sst,sstsk,tmn,xice,xicem
+ real(kind=RKIND),dimension(:),pointer:: acswdnb,acswdnbc,acswdnt,acswdntc,  &
+                                         acswupb,acswupbc,acswupt,acswuptc,  &
+                                         aclwdnb,aclwdnbc,aclwdnt,aclwdntc,  &
+                                         aclwupb,aclwupbc,aclwupt,aclwuptc
+ real(kind=RKIND),dimension(:),pointer:: nsteps_accum,ndays_accum,tday_accum, &
+                                         tyear_accum,tyear_mean
+ real(kind=RKIND),dimension(:),pointer:: sst,sstsk,tmn,xice,xicem
  real(kind=RKIND),dimension(:,:),pointer:: tlag
 
- real(kind=RKIND),dimension(:),pointer  :: t_oml, t_oml_initial, t_oml_200m_initial
- real(kind=RKIND),dimension(:),pointer  :: h_oml, h_oml_initial, hu_oml, hv_oml
- real(kind=RKIND), pointer :: config_oml_hml0
- integer,pointer:: nCells
- logical,pointer:: config_oml1d
- 
- 
+ real(kind=RKIND),pointer :: config_oml_hml0
+ real(kind=RKIND),dimension(:),pointer:: t_oml,t_oml_initial,t_oml_200m_initial
+ real(kind=RKIND),dimension(:),pointer:: h_oml,h_oml_initial,hu_oml,hv_oml
 
 !local variables and arrays:
  type(MPAS_Time_Type):: currTime
 
  logical:: init_done
  integer:: ierr,julday 
- integer:: iCell,iLag,iEdge,nEdges_m
+ integer:: iCell,iLag,n
 
 !-----------------------------------------------------------------------------------------------------------------
-! call mpas_log_write('')
-! call mpas_log_write('--- enter subroutine physics_init:')
+!call mpas_log_write('')
+!call mpas_log_write('--- enter subroutine physics_init:')
 
  call mpas_pool_get_config(configs,'config_do_restart'       ,config_do_restart       )
  call mpas_pool_get_config(configs,'config_o3climatology'    ,config_o3climatology    )
@@ -205,7 +211,6 @@
  call mpas_pool_get_array(diag_physics,'hv_oml'            ,hv_oml)
  call mpas_pool_get_config(configs,'config_oml1d'          ,config_oml1d  )
  call mpas_pool_get_config(configs,'config_oml_hml0'       ,config_oml_hml0  )
- call mpas_pool_get_dimension(mesh,'nCells',nCells)
 
  currTime = mpas_get_clock_time(clock,MPAS_NOW,ierr)
  call mpas_get_time(curr_time=currTime,DoY=julday,ierr=ierr)
@@ -213,6 +218,10 @@
 !initialization of east-north directions to convert u-tendencies from cell centers to cell
 !edges:
  call init_dirs_forphys(mesh)
+
+!initialization of logical flags for cloud mixing ratios and number concentrations, and aerosols
+!number concentrations from the Thompson cloud microphysics:
+ call init_physics_flags(state,f_qv,f_qc,f_qr,f_qi,f_qs,f_qg,f_qoz,f_nc,f_ni,f_nifa,f_nwfa)
 
 !initialization of counters i_rainc and i_rainnc. i_rainc and i_rainnc track the number of
 !times the accumulated convective (rainc) and grid-scale (rainnc) rain exceed the prescribed
@@ -222,7 +231,20 @@
     do iCell = 1, nCellsSolve
        i_rainc(iCell)  = 0
     enddo
+
+    !additional GF precipitation diagnostics:
+    call mpas_pool_get_dimension(mesh,'nClosures',nClosures)
+    call mpas_pool_get_array(diag_physics,'i_raincd_closures',i_raincd_closures)
+    nullify(i_raincd_closures)
+    if(associated(i_raincd_closures)) then
+       do iCell = 1, nCellsSolve
+          do n = 1, nClosures
+             i_raincd_closures(n,iCell) = 0
+          enddo
+       enddo
+    endif
  endif
+
  if(.not. config_do_restart .and. config_microp_scheme.ne.'off') then
     call mpas_pool_get_array(diag_physics,'i_rainnc',i_rainnc)
     do iCell = 1, nCellsSolve
@@ -274,7 +296,7 @@
 
 !initialization of xicem:
  if(.not.config_do_restart) then
-!    call mpas_log_write('--- initialization of xicem:')
+!   call mpas_log_write('--- initialization of xicem:')
     do iCell = 1, nCellsSolve
        xicem(iCell) = xice(iCell)
     enddo
@@ -284,47 +306,46 @@
 !sea-surface temperature is applied. This avoids having the array sstsk equal to
 !zero over land:
  if(.not. config_do_restart) then
-!    call mpas_log_write('--- initialization of sstsk:')
+!   call mpas_log_write('--- initialization of sstsk:')
     do iCell = 1, nCellsSolve
        sstsk(iCell) = sst(iCell)
     enddo
  endif
 
-! initialized the 1D ocean mixed-layer model  (code from wrf module_sf_oml)
- if (config_oml1d) then
-   if (.not. config_do_restart) then
-      call mpas_log_write('--- initialization of 1D ocean mixed layer model ')
-      do iCell = 1, nCellsSolve
-        t_oml(iCell) = sst(iCell)
-        t_oml_initial(iCell) = sst(iCell)
-      end do
-      if (config_oml_hml0 .gt. 0) then
-        do iCell = 1, nCellsSolve
-          h_oml(iCell) = config_oml_hml0
-          h_oml_initial(iCell) = config_oml_hml0
-          hu_oml(iCell) = 0.
-          hv_oml(iCell) = 0.
-          t_oml_200m_initial(iCell) = sst(iCell) - 5.
-        end do
-      else if (config_oml_hml0 .eq. 0) then
-! initializing with climatological mixed layer depth only
-        do iCell = 1, nCellsSolve
-          h_oml(iCell) = h_oml_initial(iCell)
-          hu_oml(iCell) = 0.
-          hv_oml(iCell) = 0.
-          t_oml_200m_initial(iCell) = sst(iCell) - 5.
-        end do
+!initialized the 1D ocean mixed-layer model (code from wrf module_sf_oml):
+ if(config_oml1d) then
+    if(.not. config_do_restart) then
+       do iCell = 1, nCellsSolve
+          t_oml(iCell) = sst(iCell)
+          t_oml_initial(iCell) = sst(iCell)
+       enddo
+       if(config_oml_hml0 .gt. 0) then
+          do iCell = 1, nCellsSolve
+             h_oml(iCell) = config_oml_hml0
+             h_oml_initial(iCell) = config_oml_hml0
+             hu_oml(iCell) = 0.
+             hv_oml(iCell) = 0.
+             t_oml_200m_initial(iCell) = sst(iCell) - 5.
+          enddo
+      elseif (config_oml_hml0 .eq. 0) then
+      !initializing with climatological mixed layer depth only
+         do iCell = 1, nCellsSolve
+            h_oml(iCell) = h_oml_initial(iCell)
+            hu_oml(iCell) = 0.
+            hv_oml(iCell) = 0.
+            t_oml_200m_initial(iCell) = sst(iCell) - 5.
+         enddo
       else
-        do iCell = 1, nCellsSolve
-          h_oml(iCell) = h_oml_initial(iCell)
-          ! WRF COMMENT:
-          ! fill in near coast area with SST: 200 K was set as missing value in ocean pre-processing code
-          if( (t_oml_200m_initial(iCell) > 200.) .and. (t_oml_200m_initial(iCell) <= 200.) )  &
+         do iCell = 1, nCellsSolve
+            h_oml(iCell) = h_oml_initial(iCell)
+            !WRF COMMENT:
+            !fill in near coast area with SST: 200 K was set as missing value in ocean pre-processing code
+            if((t_oml_200m_initial(iCell) > 200.) .and. (t_oml_200m_initial(iCell) <= 200.))  &
                t_oml_200m_initial(iCell) = sst(iCell)
-        end do
-      end if
-   end if
- end if
+         enddo
+      endif
+   endif
+ endif
 
 !initialization of temperatures needed for updating the deep soil temperature:
  if(.not. config_do_restart) then
@@ -354,7 +375,7 @@
 
 !initialization of cloud microphysics processes:
  if(config_microp_scheme .ne. 'off') &
-    call microphysics_init(dminfo,configs,mesh,sfc_input,diag_physics)
+    call init_microphysics(dminfo,configs,mesh,state,time_lev,sfc_input,diag_physics)
 
 !initialization of surface layer processes:
  if(config_sfclayer_scheme .ne. 'off') call init_sfclayer(configs)
@@ -368,28 +389,12 @@
 !initialization of shortwave radiation processes:
  init_done = .false.
  if(config_radt_sw_scheme.ne.'off') then
-    if(trim(config_radt_sw_scheme) .eq. 'cam_sw') then
-       call init_radiation_sw(dminfo,configs,mesh,atm_input,diag,diag_physics,state,time_lev)
-       init_done = .true.
-    else
-       call init_radiation_sw(dminfo,configs)
-    endif
+    call init_radiation_sw(dminfo,configs)
  endif
 
-!initialization of longwave radiation processes: if we run the CAM radiation codes, the initia
-!lization of the longwave and shortwave parameterizations is the same, and needs to be called
-!only once:
+!initialization of longwave radiation processes:
  if(config_radt_lw_scheme.ne.'off') then    
-    if(trim(config_radt_lw_scheme) .eq. 'cam_lw') then
-       if(.not. init_done) then
-          call init_radiation_lw(dminfo,configs,mesh,atm_input,diag,diag_physics,state,time_lev)
-       else
-!          call mpas_log_write('')
-!          call mpas_log_write('--- camrad lw initialization done above')
-       endif
-    else
-       call init_radiation_lw(dminfo,configs)
-    endif
+    call init_radiation_lw(dminfo,configs)
  endif
 
 ! call mpas_log_write('')
@@ -397,6 +402,65 @@
 ! call mpas_log_write('')
 
  end subroutine physics_init
+
+!=================================================================================================================
+ subroutine init_physics_flags(state,f_qv,f_qc,f_qr,f_qi,f_qs,f_qg,f_qoz,f_nc,f_ni,f_nifa,f_nwfa)
+!=================================================================================================================
+
+!input arguments:
+ type(mpas_pool_type),intent(in):: state
+
+!output arguments:
+ logical,intent(out):: f_qv,f_qc,f_qr,f_qi,f_qs,f_qg,f_qoz,f_nc,f_ni,f_nifa,f_nwfa
+
+!local pointers:
+ integer,pointer:: index_qv,index_qc,index_qr,index_qi,index_qs,index_qg
+ integer,pointer:: index_nc,index_ni,index_nifa,index_nwfa
+
+!-----------------------------------------------------------------------------------------------------------------
+
+!at present, ozone is not a prognostic variable. therefore, we set f_qoz to false:
+ f_qoz = .false.
+
+!by default, the logical that initializes the water vapor mixing ratio should always be equal to true as every
+!physics parameterization needs to know the water vapor:
+ f_qv = .true.
+
+!initializes the logicals assigned to mixing ratios:
+ f_qc = .false.
+ f_qr = .false.
+ f_qi = .false.
+ f_qs = .false.
+ f_qg = .false.
+ call mpas_pool_get_dimension(state,'index_qv',index_qv)
+ call mpas_pool_get_dimension(state,'index_qc',index_qc)
+ call mpas_pool_get_dimension(state,'index_qr',index_qr)
+ call mpas_pool_get_dimension(state,'index_qi',index_qi)
+ call mpas_pool_get_dimension(state,'index_qs',index_qs)
+ call mpas_pool_get_dimension(state,'index_qg',index_qg)
+
+ if(index_qc .gt. -1) f_qc = .true.
+ if(index_qr .gt. -1) f_qr = .true.
+ if(index_qi .gt. -1) f_qi = .true.
+ if(index_qs .gt. -1) f_qs = .true.
+ if(index_qg .gt. -1) f_qg = .true.
+
+!initializes the logicals assigned to mixing ratios:
+ f_nc   = .false.
+ f_ni   = .false.
+ f_nifa = .false.
+ f_nwfa = .false.
+ call mpas_pool_get_dimension(state,'index_nc'  ,index_nc  )
+ call mpas_pool_get_dimension(state,'index_ni'  ,index_ni  )
+ call mpas_pool_get_dimension(state,'index_nifa',index_nifa)
+ call mpas_pool_get_dimension(state,'index_nwfa',index_nwfa)
+
+ if(index_nc   .gt. -1) f_nc   = .true.
+ if(index_ni   .gt. -1) f_ni   = .true.
+ if(index_nifa .gt. -1) f_nifa = .true.
+ if(index_nwfa .gt. -1) f_nwfa = .true.
+
+ end subroutine init_physics_flags
 
 !=================================================================================================================
  subroutine init_dirs_forphys(mesh)

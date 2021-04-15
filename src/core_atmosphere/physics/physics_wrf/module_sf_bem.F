@@ -1,15 +1,20 @@
+!=================================================================================================================
+!reference: WRF-v4.1.4
+!Laura D. Fowler (laura@ucar.edu) / 2020-01-10.
+
 MODULE module_sf_bem
+#if defined(mpas)
+use mpas_atmphys_utilities, only: physics_error_fatal
+#define FATAL_ERROR(M) call physics_error_fatal( M )
+#else
+use module_wrf_error
+#define FATAL_ERROR(M) call wrf_error_fatal( M )
+#endif
+
 ! -----------------------------------------------------------------------
 !  Variables and constants used in the BEM module
 ! -----------------------------------------------------------------------
 
-#ifdef mpas
-use mpas_atmphys_utilities, only: physics_error_fatal
-#define FATAL_ERROR(M) call physics_error_fatal( M )
-#else
-#define FATAL_ERROR(M) write(0,*) M ; stop
-#endif
-         
         real emins		!emissivity of the internal walls
         parameter (emins=0.9) 
         real albins	        !albedo of the internal walls

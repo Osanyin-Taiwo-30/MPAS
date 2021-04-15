@@ -1,15 +1,14 @@
-!-----------------------------------------------------------------------------------------------------------------
-! copied from WRF version 4.0.2 for implementation in MPAS:
+!=================================================================================================================
+!reference: WRF-v4.1.4
+!Laura D. Fowler (laura@ucar.edu) / 2020-01-10.
 
 ! modifications to sourcecode for implementation in MPAS:
 !    * made the variable dx (and local variable dxmeter) a two-dimensional array to include the impact
 !      of the mean distance between cells.
 !    * added the initialization of kpblmax to kte if the optional variables p_top,znu,and znw are not
 !      available in the argument list.
-!      Laura D. Fowler (laura@ucar.edu) / 2019-01-29.
 !    * because the topography variance is zero over ocean points,also check that the variable zlowtop
 !      is strictly greater than zero for the initialization of klowtop and kloop1.
-!      Laura D. Fowler (laura@ucar.edu) / 2019-01-30.
 
 !WRF:model_layer:physics
 !
@@ -365,7 +364,7 @@ contains
    dxy4p(its:ite,3) = dxy4(its:ite,4)
    dxy4p(its:ite,4) = dxy4(its:ite,3)
 !
-   cleff(its:ite) = dxmeter
+   cleff(its:ite) = dxmeter(its:ite)
 !
 ! initialize arrays                                                 
 !                                                                       

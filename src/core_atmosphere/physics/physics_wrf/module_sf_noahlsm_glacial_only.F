@@ -1,3 +1,7 @@
+!=================================================================================================================
+!reference: WRF-v4.1.4
+!Laura D. Fowler (laura@ucar.edu) / 2020-01-10.
+
 MODULE module_sf_noahlsm_glacial_only
 #if defined(mpas)
 use mpas_atmphys_constants

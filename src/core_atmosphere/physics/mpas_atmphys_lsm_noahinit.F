@@ -214,7 +214,7 @@
  character(len=*),intent(inout):: mminlu, mminsl
 
 !local variables:
- character*128:: mess , message
+ character(len=128):: mess,message
 
  integer,parameter:: open_ok = 0
  integer:: lumatch,iindex,lc,num_slope

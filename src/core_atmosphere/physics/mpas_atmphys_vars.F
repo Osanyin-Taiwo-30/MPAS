@@ -191,12 +191,22 @@
     qr_p,             &!rain mixing ratio                                                   [kg/kg]
     qi_p,             &!cloud ice mixing ratio                                              [kg/kg]
     qs_p,             &!snow mixing ratio                                                   [kg/kg]
-    qg_p               !graupel mixing ratio                                                [kg/kg]
+    qg_p,             &!graupel mixing ratio                                                [kg/kg]
+    qh_p               !hail mixing ratio                                                   [kg/kg]
 
  real(kind=RKIND),dimension(:,:,:),allocatable:: &
-    nc_p,             &!
-    ni_p,             &!
-    nr_p               !
+    nc_p,             &!cloud droplet number concentration                                   [#/kg]
+    ni_p,             &!cloud ice number concentration                                       [#/kg]
+    nr_p,             &!rain number concentration                                            [#/kg]
+    ns_p,             &!snow number concentration                                            [#/kg]
+    ng_p,             &!graupel number concentration                                         [#/kg]
+    nh_p,             &!hail number concentration                                            [#/kg]
+    nccn_p,           &!cloud condensation nuclei number concentration                       [#/kg]
+    volg_p,           &!graupel volume                                                      [m3/kg]
+    volh_p,           &!hail volume                                                         [m3/kg]
+    zrw_p,            &!rain reflectivity                                                   [m6/kg]
+    zgw_p,            &!graupel reflectivity                                                [m6/kg]
+    zhw_p              !hail reflectivity                                                   [m6/kg]
 
 !... arrays located at w (vertical velocity) points, or at interface between layers:
  real(kind=RKIND),dimension(:,:,:),allocatable:: &
@@ -244,7 +254,8 @@
     f_qr = .true.,    &!
     f_qi = .true.,    &!
     f_qs = .true.,    &!
-    f_qg = .true.      !
+    f_qg = .true.,    &!
+    f_qh = .true.
 
  logical,parameter:: &
     f_qnc = .true.,   &!
@@ -261,6 +272,8 @@
     snowncv_p,        &!
     graupelnc_p,      &!
     graupelncv_p,     &!
+    hailnc_p,         &
+    hailncv_p,        &
     sr_p
 
 !... added for the thompson and wsm6 cloud microphysics:

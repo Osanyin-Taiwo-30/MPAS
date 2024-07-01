@@ -2822,18 +2822,24 @@ module atm_time_integration
 
       ! Avoid FP errors caused by a potential division by zero below by 
       ! initializing the "garbage cell" of rho_zz to a non-zero value
+      !$acc parallel
+      !$acc loop vector
       do k=1,nVertLevels
          rho_zz(k,nCells+1) = 1.0
       end do
+      !$acc end parallel
 
       ! compute new density everywhere so we can compute u from ru.
       ! we will also need it to compute theta_m below
 
       invNs = 1 / real(ns,RKIND)
 
+      !$acc parallel
+      !$acc loop gang worker
       do iCell=cellStart,cellEnd
 
 !DIR$ IVDEP
+         !$acc loop vector
          do k = 1, nVertLevels
             rho_p(k,iCell) = rho_p_save(k,iCell) + rho_pp(k,iCell)
 
@@ -2843,6 +2849,7 @@ module atm_time_integration
          w(1,iCell) = 0.0
 
 !DIR$ IVDEP
+         !$acc loop vector
          do k = 2, nVertLevels
             wwAvg(k,iCell) = rw_save(k,iCell) + (wwAvg(k,iCell) * invNs)
             rw(k,iCell) = rw_save(k,iCell) + rw_p(k,iCell)
@@ -2854,8 +2861,11 @@ module atm_time_integration
 
          w(nVertLevels+1,iCell) = 0.0
       end do
+      !$acc end parallel
 
       if (rk_step == 3) then
+         !$acc parallel
+         !$acc loop collapse(2)
          do iCell=cellStart,cellEnd
 !DIR$ IVDEP
             do k = 1, nVertLevels
@@ -2868,7 +2878,10 @@ module atm_time_integration
                                                           * (exner(k,iCell)-exner_base(k,iCell)))
             end do
          end do
+         !$acc end parallel
       else
+         !$acc parallel
+         !$acc loop collapse(2)
          do iCell=cellStart,cellEnd
 !DIR$ IVDEP
             do k = 1, nVertLevels
@@ -2876,6 +2889,7 @@ module atm_time_integration
                theta_m(k,iCell) = (rtheta_p(k,iCell) + rtheta_base(k,iCell))/rho_zz(k,iCell)
             end do
          end do
+         !$acc end parallel
       end if
 
 
@@ -2885,21 +2899,27 @@ module atm_time_integration
 
 !$OMP BARRIER
 
+      !$acc parallel
+      !$acc loop gang worker
       do iEdge=edgeStart,edgeEnd
 
          cell1 = cellsOnEdge(1,iEdge)
          cell2 = cellsOnEdge(2,iEdge)
 
 !DIR$ IVDEP
+         !$acc loop vector
          do k = 1, nVertLevels
             ruAvg(k,iEdge) = ru_save(k,iEdge) + (ruAvg(k,iEdge) * invNs)
             ru(k,iEdge) = ru_save(k,iEdge) + ru_p(k,iEdge)
             u(k,iEdge) = 2.*ru(k,iEdge)/(rho_zz(k,cell1)+rho_zz(k,cell2))
          end do
       end do
+      !$acc end parallel
 
 !$OMP BARRIER
 
+      !$acc parallel
+      !$acc loop gang worker
       do iCell=cellStart,cellEnd
 
          !  finish recovering w from (rho*omega)_p.  as when we formed (rho*omega)_p from u and w, we need
@@ -2908,6 +2928,7 @@ module atm_time_integration
 
          if (bdyMaskCell(iCell) <= nRelaxZone) then  ! addition for regional_MPAS, no spec zone update
 
+            !$acc loop seq
             do i=1,nEdgesOnCell(iCell)
                iEdge=edgesOnCell(i,iCell)
 
@@ -2916,6 +2937,7 @@ module atm_time_integration
                                       (zb_cell(1,i,iCell) + sign(1.0_RKIND,flux)*zb3_cell(1,i,iCell))*flux
 
 !DIR$ IVDEP
+               !$acc loop vector
                do k = 2, nVertLevels
                   flux = (fzm(k)*ru(k,iEdge)+fzp(k)*ru(k-1,iEdge))
                   w(k,iCell) = w(k,iCell) + edgesOnCell_sign(i,iCell) * &
@@ -2928,6 +2950,7 @@ module atm_time_integration
 
 
             !DIR$ IVDEP
+            !$acc loop vector
             do k = 2, nVertLevels
               w(k,iCell) = w(k,iCell)/(fzm(k)*rho_zz(k,iCell)+fzp(k)*rho_zz(k-1,iCell))
             end do
@@ -2935,6 +2958,7 @@ module atm_time_integration
          end if ! addition for regional_MPAS, no spec zone update
 
       end do
+      !$acc end parallel
 
    end subroutine atm_recover_large_step_variables_work
 

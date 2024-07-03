@@ -2816,13 +2816,21 @@ module atm_time_integration
       integer :: i, iCell, iEdge, k, cell1, cell2
       real (kind=RKIND) :: invNs, rcv, p0, flux
 
+      MPAS_ACC_TIMER_START('atm_recover_large_step_variables [ACC_data_xfer]')
+      !$acc enter data copyin(rho_p_save,rho_pp,rho_base,rw_save, &
+      !$acc                  rw_p,rtheta_base,rtheta_p_save,rtheta_pp, &
+      !$acc                  rt_diabatic_tend,exner_base,ru_save,ru_p,ruAvg)
+      !$acc enter data create(rho_zz,rho_p,rw,w,rtheta_p, &
+      !$acc                  theta_m,exner,pressure_p,ru,u)
+      !$acc enter data copyin(wwAvg,ruAvg)
+      MPAS_ACC_TIMER_STOP('atm_recover_large_step_variables [ACC_data_xfer]')
 
       rcv = rgas/(cp-rgas)
       p0 = 1.0e+05  ! this should come from somewhere else...
 
       ! Avoid FP errors caused by a potential division by zero below by 
       ! initializing the "garbage cell" of rho_zz to a non-zero value
-      !$acc parallel
+      !$acc parallel default(present)
       !$acc loop vector
       do k=1,nVertLevels
          rho_zz(k,nCells+1) = 1.0
@@ -2834,7 +2842,7 @@ module atm_time_integration
 
       invNs = 1 / real(ns,RKIND)
 
-      !$acc parallel
+      !$acc parallel default(present)
       !$acc loop gang worker
       do iCell=cellStart,cellEnd
 
@@ -2864,7 +2872,7 @@ module atm_time_integration
       !$acc end parallel
 
       if (rk_step == 3) then
-         !$acc parallel
+         !$acc parallel default(present)
          !$acc loop collapse(2)
          do iCell=cellStart,cellEnd
 !DIR$ IVDEP
@@ -2880,7 +2888,7 @@ module atm_time_integration
          end do
          !$acc end parallel
       else
-         !$acc parallel
+         !$acc parallel default(present)
          !$acc loop collapse(2)
          do iCell=cellStart,cellEnd
 !DIR$ IVDEP
@@ -2899,7 +2907,7 @@ module atm_time_integration
 
 !$OMP BARRIER
 
-      !$acc parallel
+      !$acc parallel default(present)
       !$acc loop gang worker
       do iEdge=edgeStart,edgeEnd
 
@@ -2959,6 +2967,15 @@ module atm_time_integration
 
       end do
       !$acc end parallel
+
+      MPAS_ACC_TIMER_START('atm_recover_large_step_variables [ACC_data_xfer]')
+      !$acc exit data delete(rho_p_save,rho_pp,rho_base,rw_save, &
+      !$acc                  rw_p,rtheta_base,rtheta_p_save,rtheta_pp, &
+      !$acc                  rt_diabatic_tend,ru_save,ru_p,ruAvg)
+      !$acc exit data copyout(rho_zz,rho_p,rw,w,rtheta_p, &
+      !$acc                   theta_m,exner,pressure_p,ru,u)
+      !$acc exit data copyout(wwAvg,ruAvg)
+      MPAS_ACC_TIMER_STOP('atm_recover_large_step_variables [ACC_data_xfer]')
 
    end subroutine atm_recover_large_step_variables_work
 
